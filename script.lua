@@ -12,7 +12,7 @@ local purchaseRemote = RS:WaitForChild("Network"):WaitForChild("Booths_RequestPu
 -- Add new items here as needed!
 -- ================================================
 local ITEM_NAMES = {
-    ["rbxassetid://92541145782702"] = "Huge Cat",
+    ["rbxassetid://92541145782702"] = "Blue Bell Token",
     -- ["rbxassetid://XXXXXXXXXX"] = "Item Name Here",
     -- ["rbxassetid://XXXXXXXXXX"] = "Item Name Here",
 }
@@ -20,7 +20,7 @@ local ITEM_NAMES = {
 -- ================================================
 -- Sniper config (set by mod before running)
 -- ================================================
-local TARGET_ITEM_NAME = "Huge Cat"  -- must match a name in ITEM_NAMES
+local TARGET_ITEM_NAME = "Blue Bell Token"  -- must match a name in ITEM_NAMES
 local MAX_PRICE = 10
 local BUY_QUANTITY = 100
 
