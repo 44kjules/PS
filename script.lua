@@ -1,32 +1,7 @@
--- ================================================
--- Booth Sniper | Mod Tool
--- ================================================
+local MAX_PRICE = 5
+local BUY_QUANTITY = 1
+local DELAY = 2
 
-local RS = game:GetService("ReplicatedStorage")
-
--- Remote
-local purchaseRemote = RS:WaitForChild("Network"):WaitForChild("Booths_RequestPurchase")
-
--- ================================================
--- Asset ID -> Item Name table
--- Add new items here as needed!
--- ================================================
-local ITEM_NAMES = {
-    ["rbxassetid://92541145782702"] = "Huge Cat",
-    -- ["rbxassetid://XXXXXXXXXX"] = "Item Name Here",
-    -- ["rbxassetid://XXXXXXXXXX"] = "Item Name Here",
-}
-
--- ================================================
--- Sniper config (set by mod before running)
--- ================================================
-local TARGET_ITEM_NAME = "Huge Cat"  -- must match a name in ITEM_NAMES
-local MAX_PRICE = 10
-local BUY_QUANTITY = 100
-
--- ================================================
--- Helper: parse number text e.g. "35m", "1.5k", "1b", "600" -> number
--- ================================================
 local function parseNumber(text)
     text = tostring(text):lower():gsub(",", ""):gsub("x", ""):gsub("%s+", "")
     local num, suffix = text:match("([%d%.]+)([kmb]?)")
@@ -38,142 +13,107 @@ local function parseNumber(text)
     return math.floor(num)
 end
 
--- ================================================
--- Helper: safe InvokeServer with timeout
--- ================================================
-local INVOKE_TIMEOUT = 10
+local purchaseRemote = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase")
 
-local function safeInvoke(remote, ...)
-    local args = { ... }
-    local result = nil
-    local done = false
+local allBooths = {}
 
-    task.spawn(function()
-        result = remote:InvokeServer(unpack(args))
-        done = true
+for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
+    for _, descendant in ipairs(boothModel:GetDescendants()) do
+        if descendant:IsA("ImageLabel") and descendant.Image == "rbxassetid://92541145782702" then
+
+            local uuidFrame = descendant.Parent.Parent.Parent
+            local itemSlot = descendant.Parent
+
+            local costLabel = nil
+            for _, v in ipairs(uuidFrame:GetDescendants()) do
+                if v:IsA("TextLabel") and v.Name == "Cost" then
+                    costLabel = v
+                    break
+                end
+            end
+
+            local quantityLabel = itemSlot:FindFirstChild("Quantity")
+
+            local price = costLabel and parseNumber(costLabel.ContentText) or 0
+            local qty = quantityLabel and parseNumber(quantityLabel.ContentText) or 0
+
+            local current = uuidFrame
+            local ownerID = nil
+            while current do
+                ownerID = current:GetAttribute("Owner")
+                if ownerID then break end
+                current = current.Parent
+            end
+
+            table.insert(allBooths, {
+                uuid = uuidFrame.Name,
+                owner = ownerID,
+                price = price,
+                qty = qty,
+                rawPrice = costLabel and costLabel.ContentText or "?"
+            })
+        end
+    end
+end
+
+-- Print ALL found booths
+print("=== ALL BOOTHS WITH ITEM ===")
+for _, b in ipairs(allBooths) do
+    print(string.format("  Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, b.qty))
+end
+
+-- Filter booths under max price
+local targets = {}
+print("\n=== BOOTHS UNDER OR EQUAL TO MAX PRICE (" .. MAX_PRICE .. ") ===")
+for _, b in ipairs(allBooths) do
+    if b.price <= MAX_PRICE then
+        print(string.format("  Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, b.qty))
+        table.insert(targets, b)
+    end
+end
+
+if #targets == 0 then
+    print("  None found under max price. Stopping.")
+    return
+end
+
+-- Fire purchase for each target
+print("\n=== SNIPING ===")
+for _, b in ipairs(targets) do
+    print(string.format("Buying from Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, BUY_QUANTITY))
+
+    local args = {
+        b.owner,
+        {
+            [b.uuid] = BUY_QUANTITY
+        },
+        {
+            Caller = {
+                LineNumber = 527,
+                ScriptClass = "ModuleScript",
+                Variadic = false,
+                Traceback = "ReplicatedStorage.Library.Client.BoothCmds:527 function PromptPurchase2\nReplicatedStorage.Library.Client.BoothCmds:654 function promptOtherPlayerBooth2\nReplicatedStorage.Library.Client.BoothCmds:996",
+                ScriptPath = "ReplicatedStorage.Library.Client.BoothCmds",
+                FunctionName = "PromptPurchase2",
+                Handle = "function: 0x7314c5d694817056",
+                ScriptType = "Instance",
+                ParameterCount = 2,
+                SourceIdentifier = "ReplicatedStorage.Library.Client.BoothCmds"
+            }
+        }
+    }
+
+    local success, result = pcall(function()
+        return purchaseRemote:InvokeServer(unpack(args))
     end)
 
-    local elapsed = 0
-    while not done and elapsed < INVOKE_TIMEOUT do
-        task.wait(0.1)
-        elapsed = elapsed + 0.1
-    end
-
-    if not done then
-        warn("[BoothSniper] InvokeServer timed out after " .. INVOKE_TIMEOUT .. "s")
-    end
-
-    return result
-end
-
--- ================================================
--- Helper: find target asset ID from name table
--- ================================================
-local function getAssetIdForName(name)
-    for assetId, itemName in pairs(ITEM_NAMES) do
-        if itemName == name then
-            return assetId
-        end
-    end
-    return nil
-end
-
--- ================================================
--- Main sniper function
--- ================================================
-local function sniperScan()
-    local boothsFolder = workspace:FindFirstChild("__THINGS") and
-                         workspace.__THINGS:FindFirstChild("Booths")
-
-    if not boothsFolder then
-        warn("[BoothSniper] Could not find Booths folder in workspace.__THINGS")
-        return
-    end
-
-    -- Get the asset ID we're looking for
-    local targetAssetId = getAssetIdForName(TARGET_ITEM_NAME)
-    if not targetAssetId then
-        warn("[BoothSniper] Item name not found in ITEM_NAMES table: " .. TARGET_ITEM_NAME)
-        return
-    end
-
-    print("[BoothSniper] Scanning for: " .. TARGET_ITEM_NAME .. " (" .. targetAssetId .. ")")
-
-    local found = 0
-
-    for _, boothModel in ipairs(boothsFolder:GetChildren()) do
-        if not boothModel:IsA("Model") then continue end
-
-        local ownerID = boothModel:GetAttribute("owner")
-        if not ownerID then continue end
-
-        local petsFrame = boothModel:FindFirstChild("Pets")
-        if not petsFrame then continue end
-
-        local boothTop = petsFrame:FindFirstChild("BoothTop")
-        if not boothTop then continue end
-
-        local petScroll = boothTop:FindFirstChild("PetScroll")
-        if not petScroll then continue end
-
-        -- Scan each UUID frame in this booth
-        for _, itemFrame in ipairs(petScroll:GetChildren()) do
-            if not itemFrame:IsA("Frame") then continue end
-
-            -- Navigate to the icon
-            local holder = itemFrame:FindFirstChild("Holder")
-            if not holder then continue end
-
-            local itemSlot = holder:FindFirstChild("ItemSlot")
-            if not itemSlot then continue end
-
-            local icon = itemSlot:FindFirstChild("Icon")
-            if not icon or not icon:IsA("ImageLabel") then continue end
-
-            -- Check if this item's image matches our target
-            if icon.Image ~= targetAssetId then continue end
-
-            -- Found a match! Now get price
-            local buyButton = itemFrame:FindFirstChild("Buy")
-            if not buyButton then continue end
-
-            local costLabel = buyButton:FindFirstChild("Cost")
-            if not costLabel then continue end
-
-            local price = parseNumber(costLabel.Text)
-
-            -- Get quantity
-            local quantityLabel = itemSlot:FindFirstChild("Quantity")
-            local qty = quantityLabel and parseNumber(quantityLabel.Text) or 0
-
-            print(string.format("[BoothSniper] Found %s at booth owned by %s | Price: %s | Qty: %s",
-                TARGET_ITEM_NAME, tostring(ownerID), tostring(price), tostring(qty)))
-
-            -- Price check
-            if price <= MAX_PRICE and qty > 0 then
-                local itemUUID = itemFrame.Name
-
-                print(string.format("[BoothSniper] Sniping! UUID: %s | Buying %d...", itemUUID, BUY_QUANTITY))
-
-                safeInvoke(purchaseRemote,
-                    ownerID,
-                    { [itemUUID] = BUY_QUANTITY },
-                    {}
-                )
-
-                found = found + 1
-            end
-        end
-    end
-
-    if found == 0 then
-        print("[BoothSniper] Scan complete. No matching booths found under max price.")
+    if success then
+        print("  Purchase fired successfully! Result:", tostring(result))
     else
-        print(string.format("[BoothSniper] Done! Purchased from %d booth(s).", found))
+        warn("  Purchase failed! Error:", tostring(result))
     end
+
+    task.wait(DELAY)
 end
 
--- ================================================
--- Run
--- ================================================
-sniperScan()
+print("\n=== DONE! Purchased from " .. #targets .. " booth(s) ===")
