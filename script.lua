@@ -20,7 +20,7 @@ local ITEM_NAMES = {
 -- ================================================
 -- Sniper config (set by mod before running)
 -- ================================================
-local TARGET_ITEM_NAME = "Huge Cat"  -- must match a name in ITEM_NAMES
+local TARGET_ITEM_NAME = "Blue Bell Token"  -- must match a name in ITEM_NAMES
 local MAX_PRICE = 2
 local BUY_QUANTITY = 100
 
