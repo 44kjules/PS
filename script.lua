@@ -155,4 +155,4 @@ for _, b in ipairs(targets) do
 end
 
 print("\n=== DONE! Purchased from " .. #targets .. " booth(s) ===")
-print("v1.0 " .. "by Jules#0001 on Discord")
+print("v1.1 " .. "by Jules#0001 on Discord")
