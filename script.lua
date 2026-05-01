@@ -9,8 +9,9 @@ local PETS = {
 -- ================================================
 -- Config
 -- ================================================
-local TARGET_PETS = {
-    "Spring Bluebell Token"
+local TARGET_PET = {
+    "Spring Bluebell Token",
+    "Spring Sunflower Token"
 }
 local MAX_PRICE = 5
 local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
@@ -155,4 +156,4 @@ for _, b in ipairs(targets) do
 end
 
 print("\n=== DONE! Purchased from " .. #targets .. " booth(s) ===")
-print("v1.2 " .. "by Jules#0001 on Discord")
+print("v1.4 " .. "by Jules#0001 on Discord")
