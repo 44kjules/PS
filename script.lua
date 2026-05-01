@@ -16,9 +16,9 @@ local PETS = {
 -- Config
 -- ================================================
 local TARGET_PETS = {
-    "Spring Bluebell Token"
+    "Insta-Plant Capsule"
 }
-local MAX_PRICE = 5
+local MAX_PRICE = 20000
 local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
 local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 2
