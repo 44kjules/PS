@@ -1,7 +1,7 @@
 -- ================================================
 -- Add your pets here!
 -- ================================================
-print("v1.7")
+print("v1.8")
 local PETS = {
     ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
     ["Spring Sunflower Token"] = "rbxassetid://115652718639246"
@@ -14,9 +14,9 @@ local TARGET_PETS = {
     "Spring Bluebell Token",
     "Spring Sunflower Token"
 }
-local MAX_PRICE = 500
-local BUY_MAX_QUANTITY = true   -- true = buy full available qty, false = use BUY_QUANTITY below
-local BUY_QUANTITY = 100        -- only used if BUY_MAX_QUANTITY is false
+local MAX_PRICE = 5
+local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
+local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 1
 
 -- ================================================
