@@ -12,7 +12,7 @@ local PETS = {
 -- ================================================
 local TARGET_PET = "Spring Bluebell Token"   -- change this to the pet you want to snipe
 local MAX_PRICE = 5
-local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
+local BUY_MAX_QUANTITY = true   -- true = buy full available qty, false = use BUY_QUANTITY below
 local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 1
 
