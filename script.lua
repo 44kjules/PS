@@ -1,7 +1,23 @@
+-- ================================================
+-- Add your pets here!
+-- ================================================
+local PETS = {
+    ["Huge Cat"] = "rbxassetid://92541145782702",
+    -- ["Pet Name"] = "rbxassetid://XXXXXXXXXX",
+    -- ["Pet Name"] = "rbxassetid://XXXXXXXXXX",
+}
+
+-- ================================================
+-- Config
+-- ================================================
+local TARGET_PET = "Huge Cat" -- change this to the pet you want to snipe
 local MAX_PRICE = 5
 local BUY_QUANTITY = 1
-local DELAY = 2
+local DELAY = 1
 
+-- ================================================
+-- Setup
+-- ================================================
 local function parseNumber(text)
     text = tostring(text):lower():gsub(",", ""):gsub("x", ""):gsub("%s+", "")
     local num, suffix = text:match("([%d%.]+)([kmb]?)")
@@ -15,11 +31,25 @@ end
 
 local purchaseRemote = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase")
 
+-- ================================================
+-- Validate pet name
+-- ================================================
+local TARGET_ASSET_ID = PETS[TARGET_PET]
+if not TARGET_ASSET_ID then
+    warn("Pet name not found in PETS table: " .. TARGET_PET)
+    return
+end
+
+print("Sniping: " .. TARGET_PET .. " (" .. TARGET_ASSET_ID .. ")")
+
+-- ================================================
+-- Scan booths
+-- ================================================
 local allBooths = {}
 
 for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
     for _, descendant in ipairs(boothModel:GetDescendants()) do
-        if descendant:IsA("ImageLabel") and descendant.Image == "rbxassetid://92541145782702" then
+        if descendant:IsA("ImageLabel") and descendant.Image == TARGET_ASSET_ID then
 
             local uuidFrame = descendant.Parent.Parent.Parent
             local itemSlot = descendant.Parent
@@ -33,7 +63,6 @@ for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
             end
 
             local quantityLabel = itemSlot:FindFirstChild("Quantity")
-
             local price = costLabel and parseNumber(costLabel.ContentText) or 0
             local qty = quantityLabel and parseNumber(quantityLabel.ContentText) or 0
 
@@ -56,13 +85,17 @@ for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
     end
 end
 
--- Print ALL found booths
-print("=== ALL BOOTHS WITH ITEM ===")
+-- ================================================
+-- Print all found booths
+-- ================================================
+print("=== ALL BOOTHS WITH " .. TARGET_PET .. " ===")
 for _, b in ipairs(allBooths) do
     print(string.format("  Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, b.qty))
 end
 
--- Filter booths under max price
+-- ================================================
+-- Filter by max price
+-- ================================================
 local targets = {}
 print("\n=== BOOTHS UNDER OR EQUAL TO MAX PRICE (" .. MAX_PRICE .. ") ===")
 for _, b in ipairs(allBooths) do
@@ -77,7 +110,9 @@ if #targets == 0 then
     return
 end
 
--- Fire purchase for each target
+-- ================================================
+-- Snipe!
+-- ================================================
 print("\n=== SNIPING ===")
 for _, b in ipairs(targets) do
     print(string.format("Buying from Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, BUY_QUANTITY))
