@@ -2,7 +2,7 @@
 -- Add your pets here!
 -- ================================================
 local PETS = {
-    ["Huge Cat"] = "rbxassetid://92541145782702",
+    ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
     -- ["Pet Name"] = "rbxassetid://XXXXXXXXXX",
     -- ["Pet Name"] = "rbxassetid://XXXXXXXXXX",
 }
@@ -10,9 +10,10 @@ local PETS = {
 -- ================================================
 -- Config
 -- ================================================
-local TARGET_PET = "Huge Cat" -- change this to the pet you want to snipe
+local TARGET_PET = "Spring Bluebell Token"   -- change this to the pet you want to snipe
 local MAX_PRICE = 5
-local BUY_QUANTITY = 1
+local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
+local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 1
 
 -- ================================================
@@ -41,6 +42,7 @@ if not TARGET_ASSET_ID then
 end
 
 print("Sniping: " .. TARGET_PET .. " (" .. TARGET_ASSET_ID .. ")")
+print("Mode: " .. (BUY_MAX_QUANTITY and "Buy full quantity" or "Buy " .. BUY_QUANTITY .. " per booth"))
 
 -- ================================================
 -- Scan booths
@@ -115,12 +117,13 @@ end
 -- ================================================
 print("\n=== SNIPING ===")
 for _, b in ipairs(targets) do
-    print(string.format("Buying from Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, BUY_QUANTITY))
+    local qtyToBuy = BUY_MAX_QUANTITY and b.qty or BUY_QUANTITY
+    print(string.format("Buying from Owner: %s | UUID: %s | Price: %s | Qty to buy: %d", tostring(b.owner), b.uuid, b.rawPrice, qtyToBuy))
 
     local args = {
         b.owner,
         {
-            [b.uuid] = BUY_QUANTITY
+            [b.uuid] = qtyToBuy
         },
         {
             Caller = {
@@ -152,3 +155,4 @@ for _, b in ipairs(targets) do
 end
 
 print("\n=== DONE! Purchased from " .. #targets .. " booth(s) ===")
+print("v1.0 " .. "by Jules#0001 on Discord")
