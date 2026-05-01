@@ -17,7 +17,7 @@ local TARGET_PETS = {
 local MAX_PRICE = 5
 local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
 local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
-local DELAY = 1
+local DELAY = 2
 
 -- ================================================
 -- Setup
