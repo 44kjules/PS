@@ -1,7 +1,7 @@
 -- ================================================
 -- Add your pets here!
 -- ================================================
-print("v1.5 " .. "by Jules#0001 on Discord")
+print("v1.7")
 local PETS = {
     ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
     ["Spring Sunflower Token"] = "rbxassetid://115652718639246"
@@ -10,13 +10,13 @@ local PETS = {
 -- ================================================
 -- Config
 -- ================================================
-local TARGET_PET = {
+local TARGET_PETS = {
     "Spring Bluebell Token",
     "Spring Sunflower Token"
 }
-local MAX_PRICE = 5
-local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
-local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
+local MAX_PRICE = 500
+local BUY_MAX_QUANTITY = true   -- true = buy full available qty, false = use BUY_QUANTITY below
+local BUY_QUANTITY = 100        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 1
 
 -- ================================================
@@ -36,15 +36,24 @@ end
 local purchaseRemote = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Booths_RequestPurchase")
 
 -- ================================================
--- Validate pet name
+-- Validate pet names and build asset ID lookup
 -- ================================================
-local TARGET_ASSET_ID = PETS[TARGET_PET]
-if not TARGET_ASSET_ID then
-    warn("Pet name not found in PETS table: " .. TARGET_PET)
+local targetAssetIDs = {}
+for _, petName in ipairs(TARGET_PETS) do
+    local assetID = PETS[petName]
+    if not assetID then
+        warn("Pet name not found in PETS table: " .. petName .. " -- skipping!")
+    else
+        targetAssetIDs[assetID] = petName
+        print("Queued: " .. petName .. " (" .. assetID .. ")")
+    end
+end
+
+if next(targetAssetIDs) == nil then
+    warn("No valid pets to snipe. Stopping.")
     return
 end
 
-print("Sniping: " .. TARGET_PET .. " (" .. TARGET_ASSET_ID .. ")")
 print("Mode: " .. (BUY_MAX_QUANTITY and "Buy full quantity" or "Buy " .. BUY_QUANTITY .. " per booth"))
 
 -- ================================================
@@ -54,7 +63,7 @@ local allBooths = {}
 
 for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
     for _, descendant in ipairs(boothModel:GetDescendants()) do
-        if descendant:IsA("ImageLabel") and descendant.Image == TARGET_ASSET_ID then
+        if descendant:IsA("ImageLabel") and targetAssetIDs[descendant.Image] then
 
             local uuidFrame = descendant.Parent.Parent.Parent
             local itemSlot = descendant.Parent
@@ -80,6 +89,7 @@ for _, boothModel in ipairs(workspace.__THINGS.Booths:GetChildren()) do
             end
 
             table.insert(allBooths, {
+                petName = targetAssetIDs[descendant.Image],
                 uuid = uuidFrame.Name,
                 owner = ownerID,
                 price = price,
@@ -93,9 +103,9 @@ end
 -- ================================================
 -- Print all found booths
 -- ================================================
-print("=== ALL BOOTHS WITH " .. TARGET_PET .. " ===")
+print("\n=== ALL BOOTHS WITH TARGET PETS ===")
 for _, b in ipairs(allBooths) do
-    print(string.format("  Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, b.qty))
+    print(string.format("  [%s] Owner: %s | UUID: %s | Price: %s | Qty: %d", b.petName, tostring(b.owner), b.uuid, b.rawPrice, b.qty))
 end
 
 -- ================================================
@@ -105,7 +115,7 @@ local targets = {}
 print("\n=== BOOTHS UNDER OR EQUAL TO MAX PRICE (" .. MAX_PRICE .. ") ===")
 for _, b in ipairs(allBooths) do
     if b.price <= MAX_PRICE then
-        print(string.format("  Owner: %s | UUID: %s | Price: %s | Qty: %d", tostring(b.owner), b.uuid, b.rawPrice, b.qty))
+        print(string.format("  [%s] Owner: %s | UUID: %s | Price: %s | Qty: %d", b.petName, tostring(b.owner), b.uuid, b.rawPrice, b.qty))
         table.insert(targets, b)
     end
 end
@@ -114,13 +124,14 @@ if #targets == 0 then
     print("  None found under max price. Stopping.")
     return
 end
+
 -- ================================================
 -- Snipe!
 -- ================================================
 print("\n=== SNIPING ===")
 for _, b in ipairs(targets) do
     local qtyToBuy = BUY_MAX_QUANTITY and b.qty or BUY_QUANTITY
-    print(string.format("Buying from Owner: %s | UUID: %s | Price: %s | Qty to buy: %d", tostring(b.owner), b.uuid, b.rawPrice, qtyToBuy))
+    print(string.format("Buying [%s] from Owner: %s | UUID: %s | Price: %s | Qty to buy: %d", b.petName, tostring(b.owner), b.uuid, b.rawPrice, qtyToBuy))
 
     local args = {
         b.owner,
@@ -157,4 +168,3 @@ for _, b in ipairs(targets) do
 end
 
 print("\n=== DONE! Purchased from " .. #targets .. " booth(s) ===")
-print("v1.4 " .. "by Jules#0001 on Discord")
