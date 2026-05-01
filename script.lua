@@ -4,15 +4,19 @@
 print("v1.8")
 local PETS = {
     ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
-    ["Spring Sunflower Token"] = "rbxassetid://115652718639246"
+    ["Spring Sunflower Token"] = "rbxassetid://115652718639246",
+    ["Spring Rose Token"] = "rbxassetid://130170754174499",
+    ["Insta-Plant Capsule"] = "rbxassetid://15554896248",
+    ["Diamond Seed"] = "rbxassetid://15554896030",
+
+    ["Placeholder"] = "Placeholder" -- DO NOT EDIT OR DELETE THIS LINE.
 }
 
 -- ================================================
 -- Config
 -- ================================================
 local TARGET_PETS = {
-    "Spring Bluebell Token",
-    "Spring Sunflower Token"
+    "Spring Bluebell Token"
 }
 local MAX_PRICE = 5
 local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
