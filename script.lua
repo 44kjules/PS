@@ -1,7 +1,7 @@
 -- ================================================
 -- Add your pets here!
 -- ================================================
-print("v1.4 " .. "by Jules#0001 on Discord")
+print("v1.5 " .. "by Jules#0001 on Discord")
 local PETS = {
     ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
     ["Spring Sunflower Token"] = "rbxassetid://115652718639246"
