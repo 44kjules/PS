@@ -1,7 +1,7 @@
 -- ================================================
 -- Add your pets here!
 -- ================================================
-print("v1.8")
+print("v2.2")
 local PETS = {
     ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
     ["Spring Sunflower Token"] = "rbxassetid://115652718639246",
@@ -19,7 +19,7 @@ local TARGET_PETS = {
     "Insta-Plant Capsule"
 }
 local MAX_PRICE = 20000
-local BUY_MAX_QUANTITY = false   -- true = buy full available qty, false = use BUY_QUANTITY below
+local BUY_MAX_QUANTITY = true   -- true = buy full available qty, false = use BUY_QUANTITY below
 local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 2
 
