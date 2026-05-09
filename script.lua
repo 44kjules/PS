@@ -3,12 +3,7 @@
 -- ================================================
 print("v2.2")
 local PETS = {
-    ["Spring Bluebell Token"] = "rbxassetid://92541145782702",
-    ["Spring Sunflower Token"] = "rbxassetid://115652718639246",
-    ["Spring Rose Token"] = "rbxassetid://130170754174499",
     ["Insta-Plant Capsule"] = "rbxassetid://15554896248",
-    ["Diamond Seed"] = "rbxassetid://15554896030",
-
     ["Placeholder"] = "Placeholder" -- DO NOT EDIT OR DELETE THIS LINE.
 }
 
