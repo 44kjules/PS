@@ -3,7 +3,29 @@
 -- ================================================
 print("v2.2")
 local PETS = {
-    ["Insta-Plant Capsule"] = "rbxassetid://15554896248",
+    ["Huge Elegant Eagle"] = "rbxassetid://18556265741",
+    ["Huge Merry Mule"] = "rbxassetid://123118912547385",
+    ["Huge Walrus"] = "rbxassetid://102190929472921",
+    ["Huge Candycane Unicorn"] = "rbxassetid://96812489225423",
+    ["Huge Koi Fish"] = "rbxassetid://16179890678",
+    ["Huge Nutcracker Bunny"] = "rbxassetid://134436276835311",
+    ["Huge Mining Robot"] = "rbxassetid://96864197207210",
+    ["Huge Llama"] = "rbxassetid://14976476776",
+    ["Huge Ladybug"] = "rbxassetid://99601574590476",
+    ["Huge Pastel Sock Bunny"] = "rbxassetid://85028487593165",
+    ["Huge Safari Monkey"] = "rbxassetid://131070721986590",
+    ["Huge Pixel Goblin"] = "rbxassetid://122435473843216",
+    ["Huge Festive Walrus"] = "rbxassetid://130656165679355",
+    ["Huge Royal Peacock"] = "rbxassetid://87911299372812",
+    ["Huge Pastel Deer"] = "rbxassetid://117144432225186",
+    ["Huge Easter Fox"] = "rbxassetid://127847534239530",
+    ["Huge Detective Terrier"] = "rbxassetid://79798078989101",
+    ["Huge Rudolf"] = "rbxassetid://90192944578505",
+    ["Huge Clover Peacock"] = "rbxassetid://109285154435259",
+    ["Huge Sand Turtle"] = "rbxassetid://135909325660471",
+    ["Huge Party Panda"] = "rbxassetid://102306587085097",
+    ["Huge Lemur"] = "rbxassetid://106102265443812",
+
     ["Placeholder"] = "Placeholder" -- DO NOT EDIT OR DELETE THIS LINE.
 }
 
@@ -11,9 +33,30 @@ local PETS = {
 -- Config
 -- ================================================
 local TARGET_PETS = {
-    "Insta-Plant Capsule"
+    "Huge Elegant Eagle",
+    "Huge Merry Mule",
+    "Huge Walrus",
+    "Huge Candycane Unicorn",
+    "Huge Koi Fish",
+    "Huge Nutcracker Bunny",
+    "Huge Mining Robot",
+    "Huge Llama",
+    "Huge Ladybug",
+    "Huge Pastel Sock Bunny",
+    "Huge Safari Monkey",
+    "Huge Pixel Goblin",
+    "Huge Festive Walrus",
+    "Huge Royal Peacock",
+    "Huge Pastel Deer",
+    "Huge Easter Fox",
+    "Huge Detective Terrier",
+    "Huge Rudolf",
+    "Huge Clover Peacock",
+    "Huge Sand Turtle",
+    "Huge Party Panda",
+    "Huge Lemur"
 }
-local MAX_PRICE = 20000
+local MAX_PRICE = 18000000
 local BUY_MAX_QUANTITY = true   -- true = buy full available qty, false = use BUY_QUANTITY below
 local BUY_QUANTITY = 1        -- only used if BUY_MAX_QUANTITY is false
 local DELAY = 2
